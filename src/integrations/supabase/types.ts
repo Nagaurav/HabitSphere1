@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      digital_usage_logs: {
+        Row: {
+          created_at: string
+          id: string
+          logged_date: string
+          site_category: string
+          site_url: string
+          time_spent_seconds: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logged_date?: string
+          site_category: string
+          site_url: string
+          time_spent_seconds: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logged_date?: string
+          site_category?: string
+          site_url?: string
+          time_spent_seconds?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       habit_completions: {
         Row: {
           completed_at: string
@@ -108,6 +138,42 @@ export type Database = {
           reward?: string | null
           time_of_day?: string | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      site_blocking_rules: {
+        Row: {
+          block_end_time: string | null
+          block_start_time: string | null
+          created_at: string
+          id: string
+          is_blocked: boolean
+          site_category: string
+          site_url: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          block_end_time?: string | null
+          block_start_time?: string | null
+          created_at?: string
+          id?: string
+          is_blocked?: boolean
+          site_category: string
+          site_url: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          block_end_time?: string | null
+          block_start_time?: string | null
+          created_at?: string
+          id?: string
+          is_blocked?: boolean
+          site_category?: string
+          site_url?: string
           updated_at?: string
           user_id?: string
         }
