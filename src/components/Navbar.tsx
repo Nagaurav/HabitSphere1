@@ -1,57 +1,69 @@
-
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Flame, User, Settings, BarChart2 } from "lucide-react";
 
 const Navbar: React.FC = () => {
+  const { pathname } = useLocation();
+  const { toast } = useToast();
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+  };
+
   return (
-    <header className="border-b border-border/40 py-4 bg-background/90 backdrop-blur-sm sticky top-0 z-10">
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Flame className="h-6 w-6 text-purple" />
-          <span className="font-bold text-xl">HabitSphere</span>
+    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 flex">
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <span className="hidden font-bold sm:inline-block">Habit Builder</span>
+          </Link>
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            <Link
+              to="/"
+              className={cn(
+                "transition-colors hover:text-foreground/80",
+                pathname === "/" ? "text-foreground" : "text-foreground/60"
+              )}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/digital-habits"
+              className={cn(
+                "transition-colors hover:text-foreground/80",
+                pathname === "/digital-habits"
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              )}
+            >
+              Digital Habits
+            </Link>
+            <Link
+              to="/analytics"
+              className={cn(
+                "transition-colors hover:text-foreground/80",
+                pathname === "/analytics"
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              )}
+            >
+              Analytics
+            </Link>
+          </nav>
         </div>
-        
-        <nav className="hidden md:flex items-center space-x-6">
-          <a 
-            href="#" 
-            className="text-foreground hover:text-purple transition-colors font-medium"
-          >
-            Dashboard
-          </a>
-          <a 
-            href="#" 
-            className="text-muted-foreground hover:text-purple transition-colors"
-          >
-            Habits
-          </a>
-          <a 
-            href="#" 
-            className="text-muted-foreground hover:text-purple transition-colors"
-          >
-            Statistics
-          </a>
-          <a 
-            href="#" 
-            className="text-muted-foreground hover:text-purple transition-colors"
-          >
-            Achievements
-          </a>
-        </nav>
-        
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-muted-foreground">
-            <BarChart2 className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-muted-foreground">
-            <Settings className="h-5 w-5" />
-          </Button>
-          <Button variant="outline" size="icon">
-            <User className="h-5 w-5" />
+        <div className="ml-auto flex items-center space-x-4">
+          <Button variant="outline" size="sm" onClick={handleLogout}>
+            Log Out
           </Button>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 

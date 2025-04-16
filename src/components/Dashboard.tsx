@@ -1,18 +1,32 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Flame, Calendar, TrendingUp } from "lucide-react";
+import { Flame, Calendar, TrendingUp, Sparkles, Trophy } from "lucide-react";
 import HabitsList from "./HabitsList";
 import AddHabitModal from "./AddHabitModal";
 import { Habit, TimeOfDay, HabitCategory, HabitFrequency, sampleHabits } from "@/lib/habits";
 import ProgressChart from "./ProgressChart";
+import HabitRecommendations from "./HabitRecommendations";
+import HabitGameElements from "./HabitGameElements";
 
 const Dashboard: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>(sampleHabits);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [showGameElements, setShowGameElements] = useState(false);
   const { toast } = useToast();
+
+  // Toggle states for AI and gamification features
+  useEffect(() => {
+    // Show AI recommendations after 2 seconds for a better UX flow
+    const timer = setTimeout(() => {
+      setShowRecommendations(true);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCompleteHabit = (habitId: string) => {
     setHabits(prevHabits => 
@@ -31,6 +45,9 @@ const Dashboard: React.FC = () => {
           : habit
       )
     );
+
+    // Show gamification elements after completing a habit
+    setShowGameElements(true);
 
     toast({
       title: "Habit completed!",
@@ -77,6 +94,11 @@ const Dashboard: React.FC = () => {
     ? habits.reduce((sum, h) => sum + h.streak, 0) / habits.length
     : 0;
 
+  // Calculate XP for gamification (simple formula: completed habits * 10 + total streak days)
+  const totalStreakDays = habits.reduce((sum, h) => sum + h.streak, 0);
+  const playerXP = (completedToday * 10) + totalStreakDays;
+  const playerLevel = Math.floor(playerXP / 100) + 1;
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -119,47 +141,79 @@ const Dashboard: React.FC = () => {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Habits</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              {showGameElements ? "Current Level" : "Total Habits"}
+            </CardTitle>
+            {showGameElements ? 
+              <Trophy className="h-4 w-4 text-muted-foreground" /> : 
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            }
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalHabits}</div>
-            <p className="text-xs text-muted-foreground">habits being tracked</p>
+            {showGameElements ? (
+              <div>
+                <div className="text-2xl font-bold">Level {playerLevel}</div>
+                <p className="text-xs text-muted-foreground">{playerXP} XP earned</p>
+              </div>
+            ) : (
+              <div>
+                <div className="text-2xl font-bold">{totalHabits}</div>
+                <p className="text-xs text-muted-foreground">habits being tracked</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Habits</TabsTrigger>
-          <TabsTrigger value="today">Today's Habits</TabsTrigger>
-          <TabsTrigger value="incomplete">Incomplete</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="all" className="space-y-4">
-          <HabitsList 
-            habits={habits}
-            onCompleteHabit={handleCompleteHabit}
-          />
-        </TabsContent>
-        
-        <TabsContent value="today" className="space-y-4">
-          <HabitsList 
-            habits={habits.filter(h => 
-              h.frequency === 'daily' || 
-              (h.frequency === 'weekly' && new Date().getDay() === 1)
-            )}
-            onCompleteHabit={handleCompleteHabit}
-          />
-        </TabsContent>
-        
-        <TabsContent value="incomplete" className="space-y-4">
-          <HabitsList 
-            habits={habits.filter(h => !h.completedToday)}
-            onCompleteHabit={handleCompleteHabit}
-          />
-        </TabsContent>
-      </Tabs>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div>
+          <Tabs defaultValue="all" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="all">All Habits</TabsTrigger>
+              <TabsTrigger value="today">Today's Habits</TabsTrigger>
+              <TabsTrigger value="incomplete">Incomplete</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="all" className="space-y-4">
+              <HabitsList 
+                habits={habits}
+                onCompleteHabit={handleCompleteHabit}
+              />
+            </TabsContent>
+            
+            <TabsContent value="today" className="space-y-4">
+              <HabitsList 
+                habits={habits.filter(h => 
+                  h.frequency === 'daily' || 
+                  (h.frequency === 'weekly' && new Date().getDay() === 1)
+                )}
+                onCompleteHabit={handleCompleteHabit}
+              />
+            </TabsContent>
+            
+            <TabsContent value="incomplete" className="space-y-4">
+              <HabitsList 
+                habits={habits.filter(h => !h.completedToday)}
+                onCompleteHabit={handleCompleteHabit}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="space-y-6">
+          {showRecommendations && (
+            <HabitRecommendations onAddHabit={handleAddHabit} />
+          )}
+          
+          {showGameElements && (
+            <HabitGameElements 
+              xp={playerXP}
+              level={playerLevel}
+              streak={Math.max(...habits.map(h => h.streak))}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
