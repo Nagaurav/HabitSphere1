@@ -9,6 +9,244 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      accountability_checkins: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          partnership_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          partnership_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          partnership_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_checkins_partnership_id_fkey"
+            columns: ["partnership_id"]
+            isOneToOne: false
+            referencedRelation: "accountability_partnerships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accountability_partnerships: {
+        Row: {
+          created_at: string | null
+          id: string
+          partner_id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          partner_id: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          partner_id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activities: {
+        Row: {
+          activity_type: string
+          content: string | null
+          created_at: string | null
+          habit_id: string | null
+          id: string
+          privacy_level: string
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          content?: string | null
+          created_at?: string | null
+          habit_id?: string | null
+          id?: string
+          privacy_level?: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          content?: string | null
+          created_at?: string | null
+          habit_id?: string | null
+          id?: string
+          privacy_level?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_interactions: {
+        Row: {
+          activity_id: string
+          comment_text: string | null
+          created_at: string | null
+          id: string
+          interaction_type: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          comment_text?: string | null
+          created_at?: string | null
+          id?: string
+          interaction_type: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          comment_text?: string | null
+          created_at?: string | null
+          id?: string
+          interaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_interactions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenge_messages: {
+        Row: {
+          challenge_id: string
+          created_at: string | null
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          created_at?: string | null
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          created_at?: string | null
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_messages_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenge_participants: {
+        Row: {
+          challenge_id: string
+          created_at: string | null
+          id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_participants_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          creator_id: string
+          description: string | null
+          end_date: string
+          id: string
+          is_public: boolean | null
+          start_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          creator_id: string
+          description?: string | null
+          end_date: string
+          id?: string
+          is_public?: boolean | null
+          start_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          creator_id?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_public?: boolean | null
+          start_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       digital_usage_logs: {
         Row: {
           created_at: string
@@ -36,6 +274,33 @@ export type Database = {
           site_url?: string
           time_spent_seconds?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      friend_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          receiver_id: string
+          sender_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          receiver_id: string
+          sender_id: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          receiver_id?: string
+          sender_id?: string
+          status?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -85,6 +350,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      habit_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          creator_id: string
+          description: string | null
+          frequency: string
+          id: string
+          is_anonymous: boolean | null
+          is_public: boolean | null
+          time_of_day: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          creator_id: string
+          description?: string | null
+          frequency: string
+          id?: string
+          is_anonymous?: boolean | null
+          is_public?: boolean | null
+          time_of_day?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          creator_id?: string
+          description?: string | null
+          frequency?: string
+          id?: string
+          is_anonymous?: boolean | null
+          is_public?: boolean | null
+          time_of_day?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       habits: {
         Row: {
@@ -139,6 +446,45 @@ export type Database = {
           time_of_day?: string | null
           title?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      privacy_settings: {
+        Row: {
+          allow_friend_requests: boolean | null
+          created_at: string | null
+          id: string
+          searchable: boolean | null
+          share_activity: boolean | null
+          share_habits: boolean | null
+          share_progress: boolean | null
+          share_streaks: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          allow_friend_requests?: boolean | null
+          created_at?: string | null
+          id?: string
+          searchable?: boolean | null
+          share_activity?: boolean | null
+          share_habits?: boolean | null
+          share_progress?: boolean | null
+          share_streaks?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          allow_friend_requests?: boolean | null
+          created_at?: string | null
+          id?: string
+          searchable?: boolean | null
+          share_activity?: boolean | null
+          share_habits?: boolean | null
+          share_progress?: boolean | null
+          share_streaks?: boolean | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -220,9 +566,122 @@ export type Database = {
           },
         ]
       }
+      template_ratings: {
+        Row: {
+          created_at: string | null
+          id: string
+          rating: number
+          review: string | null
+          template_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rating: number
+          review?: string | null
+          template_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rating?: number
+          review?: string | null
+          template_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_ratings_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "habit_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_integrations: {
+        Row: {
+          access_token: string | null
+          config: Json | null
+          created_at: string | null
+          id: string
+          refresh_token: string | null
+          service: string
+          token_expires_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          config?: Json | null
+          created_at?: string | null
+          id?: string
+          refresh_token?: string | null
+          service: string
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          config?: Json | null
+          created_at?: string | null
+          id?: string
+          refresh_token?: string | null
+          service?: string
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      webhooks: {
+        Row: {
+          created_at: string | null
+          events: Json
+          id: string
+          is_active: boolean | null
+          service: string
+          signing_secret: string | null
+          updated_at: string | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          events?: Json
+          id?: string
+          is_active?: boolean | null
+          service: string
+          signing_secret?: string | null
+          updated_at?: string | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          events?: Json
+          id?: string
+          is_active?: boolean | null
+          service?: string
+          signing_secret?: string | null
+          updated_at?: string | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      friends: {
+        Row: {
+          friend_id: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

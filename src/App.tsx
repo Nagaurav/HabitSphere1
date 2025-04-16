@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,9 @@ import Index from "./pages/Index";
 import DigitalHabits from "./pages/DigitalHabits";
 import NotFound from "./pages/NotFound";
 import Analytics from "./pages/Analytics";
+import Social from "./pages/Social";
+import Challenges from "./pages/Challenges";
+import Partnerships from "./pages/Partnerships";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +26,9 @@ export default function App() {
               <Route path="/" element={<Index />} />
               <Route path="/digital-habits" element={<DigitalHabits />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/social" element={<Social />} />
+              <Route path="/challenges" element={<Challenges />} />
+              <Route path="/partnerships" element={<Partnerships />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { LogOut, Home, Activity, BarChart } from "lucide-react";
+import { LogOut, Home, Activity, BarChart, Users, Trophy, UserPlus, Heart } from "lucide-react";
 
 const Navbar: React.FC = () => {
   const { pathname } = useLocation();
@@ -42,6 +42,30 @@ const Navbar: React.FC = () => {
               Dashboard
             </Link>
             <Link
+              to="/social"
+              className={cn(
+                "flex items-center gap-1.5 transition-colors hover:text-foreground/80",
+                pathname === "/social" || pathname.startsWith('/social/')
+                  ? "text-foreground font-semibold"
+                  : "text-foreground/60"
+              )}
+            >
+              <Users className="h-4 w-4" />
+              Social
+            </Link>
+            <Link
+              to="/challenges"
+              className={cn(
+                "flex items-center gap-1.5 transition-colors hover:text-foreground/80",
+                pathname === "/challenges" || pathname.startsWith('/challenges/')
+                  ? "text-foreground font-semibold"
+                  : "text-foreground/60"
+              )}
+            >
+              <Trophy className="h-4 w-4" />
+              Challenges
+            </Link>
+            <Link
               to="/digital-habits"
               className={cn(
                 "flex items-center gap-1.5 transition-colors hover:text-foreground/80",
@@ -68,6 +92,19 @@ const Navbar: React.FC = () => {
           </nav>
         </div>
         <div className="ml-auto flex items-center space-x-4">
+          <Link to="/friends/requests">
+            <Button variant="ghost" size="icon" className="relative">
+              <UserPlus className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                3
+              </span>
+            </Button>
+          </Link>
+          <Link to="/partnerships">
+            <Button variant="ghost" size="icon" className="relative">
+              <Heart className="h-5 w-5" />
+            </Button>
+          </Link>
           <Button variant="outline" size="sm" onClick={handleLogout} className="flex items-center gap-1.5">
             <LogOut className="h-4 w-4" />
             Log Out
