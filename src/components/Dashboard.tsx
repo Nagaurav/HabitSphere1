@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Flame, Calendar, TrendingUp, Sparkles, Trophy } from "lucide-react";
+import { Flame, Calendar, TrendingUp, Sparkles, Trophy, Plus } from "lucide-react";
 import HabitsList from "./HabitsList";
 import AddHabitModal from "./AddHabitModal";
 import { Habit, TimeOfDay, HabitCategory, HabitFrequency, sampleHabits } from "@/lib/habits";
@@ -94,32 +93,42 @@ const Dashboard: React.FC = () => {
     ? habits.reduce((sum, h) => sum + h.streak, 0) / habits.length
     : 0;
 
-  // Calculate XP for gamification (simple formula: completed habits * 10 + total streak days)
+  // Calculate XP for gamification
   const totalStreakDays = habits.reduce((sum, h) => sum + h.streak, 0);
   const playerXP = (completedToday * 10) + totalStreakDays;
   const playerLevel = Math.floor(playerXP / 100) + 1;
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Track and manage your habits to build consistency
-          </p>
+    <div className="space-y-6">
+      {/* Header with gradient background */}
+      <div className="bg-gradient-to-r from-purple-500/20 to-teal-500/20 rounded-xl p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Habit Journey</h1>
+            <p className="text-muted-foreground mt-1">
+              Build consistency one day at a time
+            </p>
+          </div>
+          <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={() => document.getElementById('add-habit-button')?.click()}>
+            <Plus className="h-4 w-4" />
+            Add New Habit
+          </Button>
+          <span className="hidden">
+            <AddHabitModal onAddHabit={handleAddHabit} />
+          </span>
         </div>
-        <AddHabitModal onAddHabit={handleAddHabit} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Today's Progress</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <ProgressChart percentage={completionRate} size={60} className="mr-4" />
+              <ProgressChart percentage={completionRate} size={64} className="mr-4" />
               <div>
                 <div className="text-2xl font-bold">{completedToday}/{totalHabits}</div>
                 <p className="text-xs text-muted-foreground">habits completed</p>
@@ -128,10 +137,10 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Average Streak</CardTitle>
-            <Flame className="h-4 w-4 text-muted-foreground" />
+            <Flame className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{averageStreak.toFixed(1)} days</div>
@@ -139,49 +148,48 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {showGameElements ? "Current Level" : "Total Habits"}
-            </CardTitle>
-            {showGameElements ? 
-              <Trophy className="h-4 w-4 text-muted-foreground" /> : 
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            }
+            <CardTitle className="text-sm font-medium">Total Habits</CardTitle>
+            <TrendingUp className="h-4 w-4 text-teal-500" />
           </CardHeader>
           <CardContent>
-            {showGameElements ? (
-              <div>
-                <div className="text-2xl font-bold">Level {playerLevel}</div>
-                <p className="text-xs text-muted-foreground">{playerXP} XP earned</p>
-              </div>
-            ) : (
-              <div>
-                <div className="text-2xl font-bold">{totalHabits}</div>
-                <p className="text-xs text-muted-foreground">habits being tracked</p>
-              </div>
-            )}
+            <div className="text-2xl font-bold">{totalHabits}</div>
+            <p className="text-xs text-muted-foreground">habits being tracked</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Current Level</CardTitle>
+            <Trophy className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Level {playerLevel}</div>
+            <p className="text-xs text-muted-foreground">{playerXP} XP earned</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div>
+      {/* Main Content */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Habit Lists */}
+        <div className="lg:col-span-2">
           <Tabs defaultValue="all" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="all">All Habits</TabsTrigger>
-              <TabsTrigger value="today">Today's Habits</TabsTrigger>
-              <TabsTrigger value="incomplete">Incomplete</TabsTrigger>
+            <TabsList className="w-full justify-start bg-muted/50 p-1">
+              <TabsTrigger value="all" className="rounded-lg">All Habits</TabsTrigger>
+              <TabsTrigger value="today" className="rounded-lg">Today's Habits</TabsTrigger>
+              <TabsTrigger value="incomplete" className="rounded-lg">Incomplete</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="all" className="space-y-4">
+            <TabsContent value="all" className="space-y-4 mt-2">
               <HabitsList 
                 habits={habits}
                 onCompleteHabit={handleCompleteHabit}
               />
             </TabsContent>
             
-            <TabsContent value="today" className="space-y-4">
+            <TabsContent value="today" className="space-y-4 mt-2">
               <HabitsList 
                 habits={habits.filter(h => 
                   h.frequency === 'daily' || 
@@ -191,7 +199,7 @@ const Dashboard: React.FC = () => {
               />
             </TabsContent>
             
-            <TabsContent value="incomplete" className="space-y-4">
+            <TabsContent value="incomplete" className="space-y-4 mt-2">
               <HabitsList 
                 habits={habits.filter(h => !h.completedToday)}
                 onCompleteHabit={handleCompleteHabit}
@@ -200,6 +208,7 @@ const Dashboard: React.FC = () => {
           </Tabs>
         </div>
 
+        {/* Sidebar Content */}
         <div className="space-y-6">
           {showRecommendations && (
             <HabitRecommendations onAddHabit={handleAddHabit} />

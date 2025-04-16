@@ -11,14 +11,14 @@ interface HabitsListProps {
 const HabitsList: React.FC<HabitsListProps> = ({ habits, onCompleteHabit }) => {
   if (habits.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">No habits found. Start creating new habits!</p>
+      <div className="text-center py-12 bg-muted/20 rounded-lg border border-dashed border-muted">
+        <p className="text-muted-foreground">No habits found. Start by creating new habits!</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 animate-slide-in">
+    <div className="grid gap-4 animate-fade-in">
       {habits.map((habit) => (
         <HabitCard
           key={habit.id}
