@@ -9,7 +9,151 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      habit_completions: {
+        Row: {
+          completed_at: string
+          completion_count: number | null
+          completion_date: string
+          duration_minutes: number | null
+          habit_id: string
+          id: string
+          location: string | null
+          mood: string | null
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          completion_count?: number | null
+          completion_date: string
+          duration_minutes?: number | null
+          habit_id: string
+          id?: string
+          location?: string | null
+          mood?: string | null
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          completion_count?: number | null
+          completion_date?: string
+          duration_minutes?: number | null
+          habit_id?: string
+          id?: string
+          location?: string | null
+          mood?: string | null
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_completions_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          archived: boolean | null
+          category: string
+          created_at: string
+          cue: string | null
+          description: string | null
+          difficulty_level: string | null
+          duration_minutes: number | null
+          frequency: string
+          id: string
+          required_count: number | null
+          requires_duration: boolean | null
+          reward: string | null
+          time_of_day: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean | null
+          category: string
+          created_at?: string
+          cue?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          duration_minutes?: number | null
+          frequency: string
+          id?: string
+          required_count?: number | null
+          requires_duration?: boolean | null
+          reward?: string | null
+          time_of_day?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean | null
+          category?: string
+          created_at?: string
+          cue?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          duration_minutes?: number | null
+          frequency?: string
+          id?: string
+          required_count?: number | null
+          requires_duration?: boolean | null
+          reward?: string | null
+          time_of_day?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      streaks: {
+        Row: {
+          current_streak: number | null
+          habit_id: string
+          id: string
+          last_completed_date: string | null
+          longest_streak: number | null
+          recovery_credits: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number | null
+          habit_id: string
+          id?: string
+          last_completed_date?: string | null
+          longest_streak?: number | null
+          recovery_credits?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_streak?: number | null
+          habit_id?: string
+          id?: string
+          last_completed_date?: string | null
+          longest_streak?: number | null
+          recovery_credits?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "streaks_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
