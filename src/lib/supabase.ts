@@ -115,6 +115,7 @@ export const createDigitalUsageLog = async (logData: {
   site_url: string;
   site_category: 'productive' | 'neutral' | 'distracting';
   time_spent_seconds: number;
+  user_id: string;
 }) => {
   const { data, error } = await supabase
     .from('digital_usage_logs')
@@ -130,8 +131,13 @@ export const fetchDigitalUsageLogs = async (filters?: {
   startDate?: string;
   endDate?: string;
   category?: 'productive' | 'neutral' | 'distracting';
+  user_id: string;
 }) => {
   let query = supabase.from('digital_usage_logs').select('*');
+  
+  if (filters?.user_id) {
+    query = query.eq('user_id', filters.user_id);
+  }
   
   if (filters?.startDate) {
     query = query.gte('logged_date', filters.startDate);
