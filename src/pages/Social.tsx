@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityFeed from "@/components/social/ActivityFeed";
@@ -11,6 +12,26 @@ import { Input } from "@/components/ui/input";
 
 const Social: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('activity');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Handle tab parameter from URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tab = searchParams.get('tab');
+    
+    if (tab === 'requests') {
+      setActiveTab('friends');
+    } else if (tab === 'activity' || tab === 'friends' || tab === 'templates') {
+      setActiveTab(tab);
+    }
+  }, [location]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    navigate(`/social${value !== 'activity' ? `?tab=${value}` : ''}`, { replace: true });
+  };
 
   return (
     <Layout>
@@ -37,7 +58,7 @@ const Social: React.FC = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="activity" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="w-full justify-start bg-muted/50 p-1 max-w-fit">
             <TabsTrigger value="activity">Activity Feed</TabsTrigger>
             <TabsTrigger value="friends">Friends</TabsTrigger>
@@ -49,7 +70,7 @@ const Social: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="friends">
-            <FriendsList searchQuery={searchQuery} />
+            <FriendsList searchQuery={searchQuery} initialTab={location.search.includes('requests') ? 'requests' : 'friends'} />
           </TabsContent>
           
           <TabsContent value="templates">

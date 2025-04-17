@@ -21,9 +21,10 @@ interface Friend {
 
 interface FriendsListProps {
   searchQuery?: string;
+  initialTab?: string;
 }
 
-const FriendsList: React.FC<FriendsListProps> = ({ searchQuery = '' }) => {
+const FriendsList: React.FC<FriendsListProps> = ({ searchQuery = '', initialTab = 'friends' }) => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [requests, setRequests] = useState<Friend[]>([]);
   const [suggestions, setSuggestions] = useState<Friend[]>([]);
@@ -150,7 +151,7 @@ const FriendsList: React.FC<FriendsListProps> = ({ searchQuery = '' }) => {
   }
 
   return (
-    <Tabs defaultValue="friends" className="w-full">
+    <Tabs defaultValue={initialTab} className="w-full">
       <TabsList className="w-full justify-start bg-muted/50 p-1 max-w-fit mb-4">
         <TabsTrigger value="friends">
           Friends ({filteredFriends.length})
