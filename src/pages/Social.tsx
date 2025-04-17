@@ -7,7 +7,7 @@ import ActivityFeed from "@/components/social/ActivityFeed";
 import FriendsList from "@/components/social/FriendsList";
 import CommunityTemplates from "@/components/social/CommunityTemplates";
 import { Button } from "@/components/ui/button";
-import { Search, Users, Activity, Templates, Bell, Filter } from "lucide-react";
+import { Search, Users, Activity, FileText, Bell, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -52,7 +52,7 @@ const Social: React.FC = () => {
       case 'friends':
         return <Users className="h-4 w-4 mr-2" />;
       case 'templates':
-        return <Templates className="h-4 w-4 mr-2" />;
+        return <FileText className="h-4 w-4 mr-2" />;
       default:
         return null;
     }
