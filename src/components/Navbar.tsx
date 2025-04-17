@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -10,7 +9,11 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Separator
 } from "@/components/ui";
 import { 
   LogOut, 
@@ -26,7 +29,8 @@ import {
   Settings,
   HelpCircle,
   Menu,
-  X
+  X,
+  ChevronDown
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -38,7 +42,6 @@ const Navbar: React.FC = () => {
   const [notificationCount, setNotificationCount] = useState(3);
 
   const handleLogout = () => {
-    // Implement logout logic here
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
@@ -56,6 +59,18 @@ const Navbar: React.FC = () => {
       description: "You have no new notifications.",
     });
   };
+
+  const primaryNavItems = [
+    { to: "/", label: "Dashboard", icon: Home },
+    { to: "/social", label: "Social", icon: Users },
+  ];
+
+  const secondaryNavItems = [
+    { to: "/challenges", label: "Challenges", icon: Trophy },
+    { to: "/digital-habits", label: "Digital Habits", icon: Activity },
+    { to: "/analytics", label: "Analytics", icon: BarChart },
+    { to: "/partnerships", label: "Partnerships", icon: Heart },
+  ];
 
   const NavLink = ({ to, label, icon: Icon }: { to: string; label: string; icon: React.ElementType }) => (
     <Link
@@ -88,12 +103,37 @@ const Navbar: React.FC = () => {
 
           {!isMobile && (
             <div className="flex items-center space-x-1">
-              <NavLink to="/" label="Dashboard" icon={Home} />
-              <NavLink to="/social" label="Social" icon={Users} />
-              <NavLink to="/challenges" label="Challenges" icon={Trophy} />
-              <NavLink to="/digital-habits" label="Digital Habits" icon={Activity} />
-              <NavLink to="/analytics" label="Analytics" icon={BarChart} />
-              <NavLink to="/partnerships" label="Partnerships" icon={Heart} />
+              {primaryNavItems.map((item) => (
+                <NavLink key={item.to} to={item.to} label={item.label} icon={item.icon} />
+              ))}
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-1.5 py-2 px-3 rounded-md h-auto">
+                    <span>More</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-48 p-1">
+                  <div className="flex flex-col gap-1">
+                    {secondaryNavItems.map((item) => (
+                      <Link 
+                        key={item.to}
+                        to={item.to}
+                        className={cn(
+                          "flex items-center gap-2 rounded-md p-2 text-sm transition-colors",
+                          (pathname === item.to || pathname.startsWith(`${item.to}/`))
+                            ? "bg-primary/10 text-primary font-medium" 
+                            : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           )}
         </div>
@@ -113,12 +153,9 @@ const Navbar: React.FC = () => {
               {mobileMenuOpen && (
                 <div className="absolute top-16 left-0 right-0 bg-background border-b p-4 z-50 animate-fade-in">
                   <div className="flex flex-col space-y-1">
-                    <NavLink to="/" label="Dashboard" icon={Home} />
-                    <NavLink to="/social" label="Social" icon={Users} />
-                    <NavLink to="/challenges" label="Challenges" icon={Trophy} />
-                    <NavLink to="/digital-habits" label="Digital Habits" icon={Activity} />
-                    <NavLink to="/analytics" label="Analytics" icon={BarChart} />
-                    <NavLink to="/partnerships" label="Partnerships" icon={Heart} />
+                    {[...primaryNavItems, ...secondaryNavItems].map((item) => (
+                      <NavLink key={item.to} to={item.to} label={item.label} icon={item.icon} />
+                    ))}
                   </div>
                 </div>
               )}
