@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -97,7 +98,7 @@ const Navbar: React.FC = () => {
               <Activity className="h-6 w-6 text-primary" />
             </div>
             <span className="hidden font-bold text-xl sm:inline-block bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              Habit Builder
+              Habit Sphere
             </span>
           </Link>
 
