@@ -1,318 +1,327 @@
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-import { Calendar, Clock, BarChart3, PieChart as PieChartIcon, Download, FileText } from "lucide-react";
-import { sampleHabits, HabitCategory, getCategoryIcon } from "@/lib/habits";
-import HabitInsights from "@/components/HabitInsights";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BarChart, LineChart, PieChart, ResponsiveContainer, Bar, Line, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from "recharts";
+import { CalendarDays, Clock, DownloadCloud, Share2, Calendar, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+
+const COLORS = ['#8b5cf6', '#d946ef', '#f97316', '#0ea5e9', '#14b8a6'];
+
+// Sample data - in a real app, this would come from your API/database
+const monthlyData = [
+  { name: 'Jan', completed: 45, goal: 60 },
+  { name: 'Feb', completed: 52, goal: 60 },
+  { name: 'Mar', completed: 48, goal: 60 },
+  { name: 'Apr', completed: 70, goal: 60 },
+  { name: 'May', completed: 65, goal: 60 },
+  { name: 'Jun', completed: 85, goal: 60 },
+  { name: 'Jul', completed: 68, goal: 60 },
+  { name: 'Aug', completed: 75, goal: 60 },
+  { name: 'Sep', completed: 80, goal: 60 },
+  { name: 'Oct', completed: 87, goal: 60 },
+  { name: 'Nov', completed: 60, goal: 60 },
+  { name: 'Dec', completed: 0, goal: 60 },
+];
+
+const weekdayData = [
+  { name: 'Mon', value: 78 },
+  { name: 'Tue', value: 65 },
+  { name: 'Wed', value: 83 },
+  { name: 'Thu', value: 79 },
+  { name: 'Fri', value: 67 },
+  { name: 'Sat', value: 43 },
+  { name: 'Sun', value: 58 },
+];
+
+const categoryData = [
+  { name: 'Exercise', value: 32 },
+  { name: 'Meditation', value: 24 },
+  { name: 'Reading', value: 18 },
+  { name: 'Coding', value: 22 },
+  { name: 'Journaling', value: 14 },
+];
+
+const timeOfDayData = [
+  { name: '6AM-9AM', value: 35 },
+  { name: '9AM-12PM', value: 20 },
+  { name: '12PM-3PM', value: 15 },
+  { name: '3PM-6PM', value: 10 },
+  { name: '6PM-9PM', value: 25 },
+  { name: '9PM-12AM', value: 15 },
+];
 
 const Analytics: React.FC = () => {
-  const [selectedHabit, setSelectedHabit] = useState<string | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'year'>('week');
-
-  // Sample data for visualizations
-  const habits = sampleHabits;
-
-  // Get the selected habit
-  const currentHabit = selectedHabit 
-    ? habits.find(h => h.id === selectedHabit) 
-    : null;
-
-  // Generate completion rate by category
-  const completionRateByCategory = () => {
-    const categories: Record<HabitCategory, { count: number, completed: number }> = {
-      health: { count: 0, completed: 0 },
-      fitness: { count: 0, completed: 0 },
-      mindfulness: { count: 0, completed: 0 },
-      productivity: { count: 0, completed: 0 },
-      learning: { count: 0, completed: 0 },
-      social: { count: 0, completed: 0 },
-      creativity: { count: 0, completed: 0 },
-      finance: { count: 0, completed: 0 },
-      other: { count: 0, completed: 0 }
-    };
-
-    habits.forEach(habit => {
-      categories[habit.category].count++;
-      if (habit.completedToday) {
-        categories[habit.category].completed++;
-      }
-    });
-
-    return Object.entries(categories)
-      .filter(([_, data]) => data.count > 0)
-      .map(([category, data]) => ({
-        name: category,
-        value: data.count > 0 ? Math.round((data.completed / data.count) * 100) : 0,
-        count: data.count
-      }));
+  const [timeRange, setTimeRange] = useState('monthly');
+  const [currentMonth, setCurrentMonth] = useState('April 2025');
+  
+  const handlePreviousMonth = () => {
+    setCurrentMonth('March 2025');
   };
-
-  // Generate streak data
-  const streakData = habits.map(habit => ({
-    name: habit.title.length > 15 ? `${habit.title.substring(0, 15)}...` : habit.title,
-    current: habit.streak,
-    longest: habit.longestStreak
-  }));
-
-  // Generate completion by day of week data
-  const dayOfWeekData = () => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const counts = Array(7).fill(0);
-    const completions = Array(7).fill(0);
-    
-    habits.forEach(habit => {
-      habit.completionHistory.forEach(record => {
-        const date = new Date(record.date);
-        const day = date.getDay();
-        counts[day]++;
-        if (record.completed) {
-          completions[day]++;
-        }
-      });
-    });
-    
-    return days.map((day, i) => ({
-      name: day,
-      rate: counts[i] > 0 ? Math.round((completions[i] / counts[i]) * 100) : 0
-    }));
+  
+  const handleNextMonth = () => {
+    setCurrentMonth('May 2025');
   };
-
-  // COLORS for the pie chart
-  const COLORS = [
-    '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', 
-    '#82ca9d', '#ffc658', '#8dd1e1', '#a4de6c'
-  ];
+  
+  const handleExport = () => {
+    alert('Exporting analytics data...');
+  };
 
   return (
     <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Habit Analytics</h1>
             <p className="text-muted-foreground">
-              Detailed analysis of your habit data and patterns
+              Track your habit progress and identify patterns for improvement
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Select
-              value={selectedTimeframe}
-              onValueChange={(value: 'week' | 'month' | 'year') => setSelectedTimeframe(value)}
-            >
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Select timeframe" />
+            <Select defaultValue="monthly">
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Time Period" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="week">Last 7 days</SelectItem>
-                <SelectItem value="month">Last 30 days</SelectItem>
-                <SelectItem value="year">This year</SelectItem>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="icon">
-              <Download className="h-4 w-4" />
+              <Filter className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" onClick={handleExport}>
+              <DownloadCloud className="h-4 w-4 mr-2" />
+              Export
             </Button>
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <div className="text-lg font-medium">{currentMonth}</div>
+            <Button variant="outline" size="icon" onClick={handleNextMonth}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="text-primary">
+              Today
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Completion Rate by Category</CardTitle>
-              <PieChartIcon className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                Completion Rate
+              </CardTitle>
+              <CardDescription>Average across all habits</CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={completionRateByCategory()}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}%`}
-                    >
-                      {completionRateByCategory().map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent>
+              <div className="text-3xl font-bold">78%</div>
+              <p className="text-xs text-muted-foreground mt-1">↑ 12% from last month</p>
             </CardContent>
           </Card>
-
+          
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Habit Streak Comparison</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <Clock className="h-4 w-4 text-primary" />
+                Most Productive Time
+              </CardTitle>
+              <CardDescription>When you complete most habits</CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={streakData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    layout="vertical"
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={100} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="current" fill="hsl(var(--primary))" name="Current Streak" />
-                    <Bar dataKey="longest" fill="hsl(var(--primary) / 0.5)" name="Longest Streak" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent>
+              <div className="text-3xl font-bold">6AM-9AM</div>
+              <p className="text-xs text-muted-foreground mt-1">Morning person pattern</p>
             </CardContent>
           </Card>
-
+          
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Completion by Day of Week</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-primary" />
+                Best Streak Day
+              </CardTitle>
+              <CardDescription>Day of week with highest completion</CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={dayOfWeekData()}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="rate"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2}
-                      name="Completion Rate (%)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+            <CardContent>
+              <div className="text-3xl font-bold">Wednesday</div>
+              <p className="text-xs text-muted-foreground mt-1">83% completion rate</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <Share2 className="h-4 w-4 text-primary" />
+                Top Category
+              </CardTitle>
+              <CardDescription>Most completed habit type</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">Exercise</div>
+              <p className="text-xs text-muted-foreground mt-1">32% of all completions</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="md:col-span-1">
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList className="w-full justify-start bg-muted/50 p-1 max-w-fit">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="habits">Habits</TabsTrigger>
+            <TabsTrigger value="trends">Trends</TabsTrigger>
+            <TabsTrigger value="patterns">Patterns</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Monthly Completion vs Goal</CardTitle>
+                  <CardDescription>Track your habit completion against set goals</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="completed" fill="#8b5cf6" name="Completed" />
+                        <Bar dataKey="goal" fill="#d1d5db" name="Goal" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Completion by Day of Week</CardTitle>
+                  <CardDescription>See which days you're most successful</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={weekdayData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#0ea5e9" name="Success Rate (%)" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Habits by Category</CardTitle>
+                  <CardDescription>Distribution across different habit types</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="h-72 flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Completion by Time of Day</CardTitle>
+                  <CardDescription>When you're most likely to complete habits</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={timeOfDayData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#f97316" name="Completions (%)" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="habits">
             <Card>
               <CardHeader>
-                <CardTitle>Habit Analysis</CardTitle>
-                <CardDescription>
-                  Select a habit to view detailed insights
-                </CardDescription>
+                <CardTitle>Individual Habit Analytics</CardTitle>
+                <CardDescription>Select a habit to view detailed analytics</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {habits.map(habit => (
-                    <Button
-                      key={habit.id}
-                      variant={selectedHabit === habit.id ? "default" : "outline"}
-                      className="w-full justify-start"
-                      onClick={() => setSelectedHabit(habit.id)}
-                    >
-                      <span className="mr-2">{getCategoryIcon(habit.category)}</span>
-                      <span className="truncate">{habit.title}</span>
-                    </Button>
-                  ))}
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Select a habit from the dropdown to view detailed analytics.</p>
                 </div>
               </CardContent>
             </Card>
-          </div>
-
-          <div className="md:col-span-2">
-            {selectedHabit ? (
-              <HabitInsights habitId={selectedHabit} habitData={currentHabit} />
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Habit Insights</CardTitle>
-                  <CardDescription>
-                    Select a habit to view AI-powered insights and analytics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                  <Clock className="h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Choose a habit from the list to see detailed analytics and personalized insights.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Analytics Reports</CardTitle>
-            <CardDescription>
-              Export or view detailed analytics reports
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="weekly">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="weekly">Weekly Report</TabsTrigger>
-                <TabsTrigger value="monthly">Monthly Report</TabsTrigger>
-                <TabsTrigger value="custom">Custom Report</TabsTrigger>
-              </TabsList>
-              <TabsContent value="weekly" className="pt-4">
-                <div className="flex items-center gap-4">
-                  <FileText className="h-8 w-8 text-muted-foreground" />
-                  <div>
-                    <h3 className="text-lg font-medium">Weekly Habit Summary</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      A comprehensive overview of your habit performance this week
-                    </p>
-                    <Button>
-                      <Download className="h-4 w-4 mr-2" /> Download Report
-                    </Button>
-                  </div>
+          </TabsContent>
+          
+          <TabsContent value="trends">
+            <Card>
+              <CardHeader>
+                <CardTitle>Long-term Trends</CardTitle>
+                <CardDescription>View your progress over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Coming soon! Long-term trend analysis will be available in the next update.</p>
                 </div>
-              </TabsContent>
-              <TabsContent value="monthly" className="pt-4">
-                <div className="flex items-center gap-4">
-                  <FileText className="h-8 w-8 text-muted-foreground" />
-                  <div>
-                    <h3 className="text-lg font-medium">Monthly Progress Report</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Detailed analysis of your habit trends over the past month
-                    </p>
-                    <Button>
-                      <Download className="h-4 w-4 mr-2" /> Download Report
-                    </Button>
-                  </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="patterns">
+            <Card>
+              <CardHeader>
+                <CardTitle>Behavior Patterns</CardTitle>
+                <CardDescription>AI-powered insights about your habit patterns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Coming soon! Pattern analysis will be available in the next update.</p>
                 </div>
-              </TabsContent>
-              <TabsContent value="custom" className="pt-4">
-                <div className="flex items-center gap-4">
-                  <FileText className="h-8 w-8 text-muted-foreground" />
-                  <div>
-                    <h3 className="text-lg font-medium">Custom Analytics Report</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Generate a custom report with specific date ranges and metrics
-                    </p>
-                    <Button>
-                      <BarChart3 className="h-4 w-4 mr-2" /> Create Custom Report
-                    </Button>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
