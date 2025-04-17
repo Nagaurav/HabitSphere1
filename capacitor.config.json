@@ -1,0 +1,20 @@
+
+{
+  "appId": "app.lovable.9f1e78024a59460bae9beb86f314b680",
+  "appName": "Habit Sphere",
+  "web": {
+    "server": {
+      "url": "https://9f1e7802-4a59-460b-ae9b-eb86f314b680.lovableproject.com?forceHideBadge=true",
+      "cleartext": true
+    }
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffffff",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    }
+  }
+}
