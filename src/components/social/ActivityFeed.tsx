@@ -16,10 +16,10 @@ interface Activity {
   id: string;
   user_id: string;
   activity_type: string;
-  content: string;
+  content: string | null;
   privacy_level: 'private' | 'friends' | 'public';
-  habit_id?: string;
-  created_at: string;
+  habit_id?: string | null;
+  created_at: string | null;
   user_name?: string;
   habit_title?: string;
   habit_category?: string;
@@ -67,8 +67,10 @@ const ActivityFeed: React.FC = () => {
         habit_category: 'learning',
         likes: Math.floor(Math.random() * 10),
         comments: [],
-        liked_by_me: false
-      })) || [];
+        liked_by_me: false,
+        // Ensure privacy_level is one of the allowed values
+        privacy_level: (activity.privacy_level as 'private' | 'friends' | 'public') || 'friends'
+      })) as Activity[];
 
       setActivities(processedActivities);
       setLoading(false);
@@ -209,7 +211,7 @@ const ActivityFeed: React.FC = () => {
                   <p className="text-sm font-medium">{activity.user_name}</p>
                   <div className="flex items-center text-xs text-muted-foreground">
                     <Clock className="h-3 w-3 mr-1" />
-                    {formatDistance(new Date(activity.created_at), new Date(), { addSuffix: true })}
+                    {activity.created_at ? formatDistance(new Date(activity.created_at), new Date(), { addSuffix: true }) : ''}
                   </div>
                 </div>
               </div>
