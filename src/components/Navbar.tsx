@@ -41,6 +41,7 @@ const Navbar = () => {
   const { pathname } = useLocation();
   const { toast } = useToast();
   const [notificationCount, setNotificationCount] = React.useState(3);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNotificationClick = () => {
     setNotificationCount(0);
@@ -50,7 +51,39 @@ const Navbar = () => {
     });
   };
 
-  // Simple function to handle logout
+  // Enhanced function to handle account menu actions
+  const handleAccountAction = (action: string) => {
+    switch (action) {
+      case "profile":
+        toast({
+          title: "Profile",
+          description: "Navigating to your profile page.",
+        });
+        // Add actual navigation logic here
+        break;
+      case "settings":
+        toast({
+          title: "Settings",
+          description: "Opening settings page.",
+        });
+        // Add actual navigation logic here
+        break;
+      case "help":
+        toast({
+          title: "Help Center",
+          description: "Opening help and documentation.",
+        });
+        // Add actual navigation or modal logic here
+        break;
+      case "logout":
+        handleLogout();
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Function to handle logout
   const handleLogout = () => {
     toast({
       title: "Logged out",
@@ -58,41 +91,6 @@ const Navbar = () => {
     });
     // Add actual logout logic here
   };
-
-  // Mobile navbar is very simple
-  if (isMobile) {
-    return (
-      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="rounded-full bg-primary/10 p-1">
-              <Activity className="h-5 w-5 text-primary" />
-            </div>
-            <span className="font-bold text-lg bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              Habit Sphere
-            </span>
-          </Link>
-
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="relative"
-            onClick={handleNotificationClick}
-          >
-            <Bell className="h-5 w-5" />
-            {notificationCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                {notificationCount}
-              </span>
-            )}
-          </Button>
-        </div>
-      </nav>
-    );
-  }
-
-  // Desktop navbar
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -126,6 +124,70 @@ const Navbar = () => {
     </Link>
   );
 
+  // Mobile navbar is very simple
+  if (isMobile) {
+    return (
+      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="rounded-full bg-primary/10 p-1">
+              <Activity className="h-5 w-5 text-primary" />
+            </div>
+            <span className="font-bold text-lg bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              Habit Sphere
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+              onClick={handleNotificationClick}
+            >
+              <Bell className="h-5 w-5" />
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                  {notificationCount}
+                </span>
+              )}
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleAccountAction("profile")}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleAccountAction("settings")}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleAccountAction("help")}>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  <span>Help</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleAccountAction("logout")}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
+  // Desktop navbar
   return (
     <nav className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:block hidden">
       <div className="container flex h-16 items-center justify-between">
@@ -177,52 +239,27 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          {isMobile ? (
-            <>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={toggleMobileMenu}
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-              
-              {mobileMenuOpen && (
-                <div className="absolute top-16 left-0 right-0 bg-background border-b p-4 z-50 animate-fade-in">
-                  <div className="flex flex-col space-y-1">
-                    {[...primaryNavItems, ...secondaryNavItems].map((item) => (
-                      <NavLink key={item.to} to={item.to} label={item.label} icon={item.icon} />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <Link to="/social?tab=requests">
-                <Button variant="ghost" size="icon" className="relative">
-                  <UserPlus className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                    3
-                  </span>
-                </Button>
-              </Link>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative"
-                onClick={handleNotificationClick}
-              >
-                <Bell className="h-5 w-5" />
-                {notificationCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                    {notificationCount}
-                  </span>
-                )}
-              </Button>
-            </>
-          )}
+          <Link to="/social?tab=requests">
+            <Button variant="ghost" size="icon" className="relative">
+              <UserPlus className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                3
+              </span>
+            </Button>
+          </Link>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative"
+            onClick={handleNotificationClick}
+          >
+            <Bell className="h-5 w-5" />
+            {notificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                {notificationCount}
+              </span>
+            )}
+          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -233,20 +270,20 @@ const Navbar = () => {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAccountAction("profile")}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAccountAction("settings")}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAccountAction("help")}>
                 <HelpCircle className="mr-2 h-4 w-4" />
                 <span>Help</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
+              <DropdownMenuItem onClick={() => handleAccountAction("logout")}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
