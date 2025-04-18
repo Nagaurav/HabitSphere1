@@ -18,10 +18,12 @@ const Layout: React.FC<LayoutProps> = ({ children, className }) => {
       <Navbar />
       <main className={cn(
         "flex-1 container py-4 md:py-6",
-        isMobile && "pb-24", // Increased padding for bottom nav
+        isMobile && "pb-24 px-3", // Added px-3 for better padding on mobile
         className
       )}>
-        {children}
+        <div className="max-w-6xl mx-auto w-full">
+          {children}
+        </div>
       </main>
       {isMobile && <BottomNav />}
       <footer className={cn(

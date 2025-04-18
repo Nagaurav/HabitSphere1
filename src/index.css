@@ -100,7 +100,7 @@
 /* Custom components */
 @layer components {
   .habit-card {
-    @apply bg-card rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md;
+    @apply bg-card rounded-xl border p-3 md:p-5 shadow-sm transition-all duration-200 hover:shadow-md;
   }
   
   .habit-card-active {
@@ -108,7 +108,7 @@
   }
   
   .streak-dot {
-    @apply h-4 w-4 rounded-full;
+    @apply h-3 w-3 md:h-4 md:w-4 rounded-full;
   }
   
   .streak-dot-completed {
@@ -125,5 +125,100 @@
   
   .progress-ring {
     @apply transition-all duration-300;
+  }
+
+  /* Responsive utility classes */
+  .container-responsive {
+    @apply container px-3 sm:px-4 md:px-6;
+  }
+  
+  .text-responsive {
+    @apply text-sm md:text-base;
+  }
+  
+  .heading-responsive {
+    @apply text-xl md:text-2xl lg:text-3xl font-bold;
+  }
+  
+  .subheading-responsive {
+    @apply text-lg md:text-xl font-semibold;
+  }
+  
+  .card-responsive {
+    @apply p-3 sm:p-4 md:p-6 rounded-lg;
+  }
+  
+  .spacing-responsive {
+    @apply my-3 md:my-4 lg:my-6;
+  }
+  
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6;
+  }
+  
+  /* Animation classes */
+  .animate-pulse-scale {
+    animation: pulse-scale 1.5s infinite;
+  }
+  
+  @keyframes pulse-scale {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-in-out;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* Media query for extremely small screens */
+@media (max-width: 360px) {
+  .xs-hidden {
+    display: none;
+  }
+  
+  .xs-text-smaller {
+    font-size: 0.875rem;
+  }
+  
+  .xs-padding-smaller {
+    padding: 0.5rem;
+  }
+  
+  .xs-margin-smaller {
+    margin: 0.5rem;
+  }
+}
+
+/* Media query for tablets and medium screens */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .md-adjust-flex {
+    flex-direction: row;
+  }
+  
+  .md-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Media query for large screens */
+@media (min-width: 1024px) {
+  .lg-desktop-enhanced {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
