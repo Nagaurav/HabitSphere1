@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -14,7 +13,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Separator
 } from "@/components/ui";
 import { 
   LogOut, 
@@ -39,7 +37,6 @@ const Navbar: React.FC = () => {
   const { pathname } = useLocation();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
 
   const handleLogout = () => {
@@ -49,16 +46,53 @@ const Navbar: React.FC = () => {
     });
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
   const handleNotificationClick = () => {
     setNotificationCount(0);
     toast({
       title: "Notifications cleared",
       description: "You have no new notifications.",
     });
+  };
+
+  // Only show logo and notifications on mobile
+  if (isMobile) {
+    return (
+      <nav className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="rounded-full bg-primary/10 p-1">
+              <Activity className="h-5 w-5 text-primary" />
+            </div>
+            <span className="font-bold text-lg bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              Habit Sphere
+            </span>
+          </Link>
+
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+              onClick={handleNotificationClick}
+            >
+              <Bell className="h-5 w-5" />
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                  {notificationCount}
+                </span>
+              )}
+            </Button>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
+  // Desktop navbar
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   const primaryNavItems = [
@@ -90,7 +124,7 @@ const Navbar: React.FC = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:block hidden">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="mr-6 flex items-center space-x-2">
