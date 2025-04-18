@@ -16,7 +16,7 @@ interface SiteBlockingRule {
   is_blocked: boolean;
   block_start_time?: string;
   block_end_time?: string;
-  user_id?: string; // Add user_id field to interface
+  user_id?: string;
 }
 
 const DigitalHabits: React.FC = () => {
@@ -44,7 +44,6 @@ const DigitalHabits: React.FC = () => {
         variant: "destructive"
       });
     } else {
-      // Cast the data to ensure type compatibility
       setRules(data?.map(rule => ({
         ...rule,
         site_category: rule.site_category as 'productive' | 'neutral' | 'distracting'
@@ -93,7 +92,6 @@ const DigitalHabits: React.FC = () => {
         variant: "destructive"
       });
     } else {
-      // Ensure the type is correct when adding to rules array
       const typedData = {
         ...data,
         site_category: data.site_category as 'productive' | 'neutral' | 'distracting'
