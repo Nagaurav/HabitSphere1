@@ -5,7 +5,7 @@ export interface DigitalUsageLog {
   site_url: string;
   site_category: 'productive' | 'neutral' | 'distracting';
   time_spent_seconds: number;
-  user_id: string; // Changed from optional to required
+  user_id: string; // Now required
 }
 
 export const createDigitalUsageLog = async (logData: DigitalUsageLog) => {
