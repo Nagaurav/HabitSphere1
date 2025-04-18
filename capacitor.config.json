@@ -2,6 +2,7 @@
 {
   "appId": "com.lovable.habitsphere",
   "appName": "Habit Sphere",
+  "webDir": "dist",
   "web": {
     "server": {
       "url": "https://9f1e7802-4a59-460b-ae9b-eb86f314b680.lovableproject.com?forceHideBadge=true",
