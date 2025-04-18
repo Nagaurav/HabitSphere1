@@ -18,7 +18,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    const { site_url, time_spent_seconds } = await req.json();
+    const { site_url, time_spent_seconds, user_id } = await req.json();
 
     // Get site category from rules
     const { data: ruleData } = await supabaseClient
@@ -35,7 +35,8 @@ serve(async (req) => {
       .insert({
         site_url,
         site_category,
-        time_spent_seconds
+        time_spent_seconds,
+        user_id: user_id || '00000000-0000-0000-0000-000000000000' // Providing a default user ID if none provided
       })
       .select()
       .single();

@@ -2,6 +2,7 @@
 let activeTabId;
 let startTime;
 let activeUrl;
+let userId = null; // We'll store the user ID here if available
 
 // Initialize tracking when a tab becomes active
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
@@ -34,19 +35,25 @@ function stopTracking() {
   const endTime = Date.now();
   const timeSpent = Math.round((endTime - startTime) / 1000); // Convert to seconds
 
-  // Send data to your Supabase backend
-  fetch('https://qmdqruppbuyutasssggx.supabase.co/functions/v1/log-digital-usage', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // Add your Supabase anon key here
-      'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtZHFydXBwYnV5dXRhc3NzZ2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2Mzg4ODAsImV4cCI6MjA2MDIxNDg4MH0.23m4emgF1TsS3WOl5HP7quhjGzDqtbd7S08K6o9dBAk'
-    },
-    body: JSON.stringify({
-      site_url: activeUrl,
-      time_spent_seconds: timeSpent
-    })
-  }).catch(console.error);
+  // Retrieve userId from storage if available
+  chrome.storage.local.get(['userId'], function(result) {
+    userId = result.userId;
+    
+    // Send data to your Supabase backend
+    fetch('https://qmdqruppbuyutasssggx.supabase.co/functions/v1/log-digital-usage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add your Supabase anon key here
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtZHFydXBwYnV5dXRhc3NzZ2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2Mzg4ODAsImV4cCI6MjA2MDIxNDg4MH0.23m4emgF1TsS3WOl5HP7quhjGzDqtbd7S08K6o9dBAk'
+      },
+      body: JSON.stringify({
+        site_url: activeUrl,
+        time_spent_seconds: timeSpent,
+        user_id: userId || '00000000-0000-0000-0000-000000000000' // Default anonymous user if not logged in
+      })
+    }).catch(console.error);
+  });
 
   activeTabId = null;
   startTime = null;
@@ -73,7 +80,8 @@ async function checkTimeLimits() {
       'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtZHFydXBwYnV5dXRhc3NzZ2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2Mzg4ODAsImV4cCI6MjA2MDIxNDg4MH0.23m4emgF1TsS3WOl5HP7quhjGzDqtbd7S08K6o9dBAk'
     },
     body: JSON.stringify({
-      site_url: activeUrl
+      site_url: activeUrl,
+      user_id: userId || '00000000-0000-0000-0000-000000000000'
     })
   });
 
@@ -88,3 +96,12 @@ async function checkTimeLimits() {
     });
   }
 }
+
+// Listen for messages from the popup to set the user ID
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'SET_USER_ID') {
+    userId = message.userId;
+    chrome.storage.local.set({ userId: userId });
+    sendResponse({ success: true });
+  }
+});
