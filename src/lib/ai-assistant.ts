@@ -38,15 +38,15 @@ export const getHabitAssistant = async (params: HabitAssistantRequest) => {
     // Get the current user
     const { data: { user } } = await supabase.auth.getUser();
     
-    if (!user) {
-      throw new Error('You must be logged in to use the AI assistant');
-    }
+    // If user is logged in, use their ID, otherwise use a demo mode
+    const userId = user?.id || 'demo-user';
     
     // Call the edge function
     const { data, error } = await supabase.functions.invoke('habit-assistant', {
       body: {
         ...params,
-        userId: params.userId || user.id
+        userId: params.userId || userId,
+        isDemoMode: !user
       }
     });
     
@@ -75,7 +75,11 @@ export const getHabitRecommendations = async (userId?: string): Promise<HabitRec
       userId: userId || ''
     });
     
-    if (error) throw new Error(error);
+    if (error) {
+      console.error('AI service error:', error);
+      // Return fallback recommendations if the AI service fails
+      return getFallbackRecommendations();
+    }
     
     // The AI returns a JSON string of recommendations
     if (data?.content) {
@@ -84,14 +88,14 @@ export const getHabitRecommendations = async (userId?: string): Promise<HabitRec
         return JSON.parse(data.content);
       } catch (parseError) {
         console.error('Error parsing recommendations:', parseError);
-        return [];
+        return getFallbackRecommendations();
       }
     }
     
-    return [];
+    return getFallbackRecommendations();
   } catch (error) {
     console.error('Error getting habit recommendations:', error);
-    return [];
+    return getFallbackRecommendations();
   }
 };
 
@@ -186,4 +190,36 @@ export const getNotificationTiming = async (): Promise<string[]> => {
     console.error('Error getting notification timing:', error);
     return ['09:00', '12:00', '18:00']; // Default times
   }
+};
+
+/**
+ * Provides fallback recommendations when AI service is unavailable
+ */
+const getFallbackRecommendations = (): HabitRecommendation[] => {
+  return [
+    {
+      title: "Drink water before meals",
+      description: "Drinking a glass of water 30 minutes before each meal improves hydration and digestion",
+      category: "health",
+      difficulty: 1
+    },
+    {
+      title: "5-minute meditation",
+      description: "Take just 5 minutes each morning to sit quietly and focus on your breathing",
+      category: "mindfulness",
+      difficulty: 2
+    },
+    {
+      title: "Daily gratitude journal",
+      description: "Write down three things you're grateful for each evening before bed",
+      category: "mindfulness",
+      difficulty: 2
+    },
+    {
+      title: "10,000 steps daily",
+      description: "Aim to walk 10,000 steps throughout your day for improved health",
+      category: "fitness",
+      difficulty: 3
+    }
+  ];
 };

@@ -20,6 +20,7 @@ interface HabitAssistantRequest {
   currentStreak?: number;
   timeOfDay?: string;
   userData?: any;
+  isDemoMode?: boolean;
 }
 
 serve(async (req) => {
@@ -30,7 +31,7 @@ serve(async (req) => {
 
   try {
     // Extract the request data
-    const { action, userId, habitId, currentStreak, timeOfDay, userData } = await req.json() as HabitAssistantRequest;
+    const { action, userId, habitId, currentStreak, timeOfDay, userData, isDemoMode } = await req.json() as HabitAssistantRequest;
     
     if (!userId) {
       return new Response(
@@ -42,8 +43,14 @@ serve(async (req) => {
     // Create Supabase client with service role key for admin access
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
-    // Initialize user context based on request action
-    const userContext = await getUserContext(supabase, userId, action, habitId);
+    // If in demo mode, use predefined context
+    let userContext;
+    if (isDemoMode) {
+      userContext = getDemoUserContext(action);
+    } else {
+      // Initialize user context based on request action
+      userContext = await getUserContext(supabase, userId, action, habitId);
+    }
     
     if (!userContext) {
       return new Response(
@@ -71,6 +78,58 @@ serve(async (req) => {
     );
   }
 });
+
+// Function to get demo user context
+function getDemoUserContext(action: string) {
+  // Sample habits for demo mode
+  const demoHabits = [
+    {
+      id: "demo-1",
+      title: "Drink water",
+      description: "Stay hydrated throughout the day",
+      category: "health",
+      frequency: "daily",
+      time_of_day: "anytime",
+      created_at: new Date().toISOString()
+    },
+    {
+      id: "demo-2",
+      title: "Exercise",
+      description: "30 minutes of physical activity",
+      category: "fitness",
+      frequency: "daily",
+      time_of_day: "morning",
+      created_at: new Date().toISOString()
+    }
+  ];
+
+  // Sample completions for demo mode
+  const demoCompletions = [
+    {
+      habit_id: "demo-1",
+      completion_date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+      completed: true
+    },
+    {
+      habit_id: "demo-1",
+      completion_date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0],
+      completed: true
+    },
+    {
+      habit_id: "demo-2",
+      completion_date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+      completed: true
+    }
+  ];
+
+  return {
+    user: { id: "demo-user", name: "Demo User" },
+    habits: demoHabits,
+    completions: demoCompletions,
+    digitalLogs: [],
+    specificHabit: action === 'personalized_reminder' ? demoHabits[0] : null
+  };
+}
 
 // Function to fetch and build user context from database
 async function getUserContext(supabase, userId: string, action: string, habitId?: string) {

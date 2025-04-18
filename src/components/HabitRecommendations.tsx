@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Plus, Loader2 } from 'lucide-react';
+import { Sparkles, Plus, Loader2, RefreshCw } from 'lucide-react';
 import { getHabitRecommendations, HabitRecommendation } from '@/lib/ai-assistant';
 import { HabitCategory, HabitFrequency, TimeOfDay, getCategoryIcon } from '@/lib/habits';
 
@@ -30,10 +30,17 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
 
   const fetchRecommendations = async () => {
     setLoading(true);
+    setError(null);
+    
     try {
       const data = await getHabitRecommendations();
-      setRecommendations(data);
-      setError(null);
+      
+      if (data && data.length > 0) {
+        setRecommendations(data);
+        setError(null);
+      } else {
+        setError('No recommendations available right now');
+      }
     } catch (err) {
       console.error('Error fetching recommendations:', err);
       setError('Failed to load habit recommendations');
@@ -65,6 +72,14 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
     });
   };
 
+  const handleRetry = () => {
+    toast({
+      title: 'Refreshing',
+      description: 'Getting new AI recommendations...',
+    });
+    fetchRecommendations();
+  };
+
   if (loading) {
     return (
       <Card>
@@ -90,7 +105,7 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
 
   if (error) {
     return (
-      <Card className="border-destructive/50">
+      <Card className="border-destructive/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -99,16 +114,17 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
           <CardDescription>Unable to load recommendations</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {error}. Please try again later.
+          <p className="text-sm text-muted-foreground mb-4">
+            {error}. This could be due to network issues or our AI service being temporarily unavailable.
           </p>
           <Button 
             variant="outline" 
             size="sm" 
-            className="mt-4"
-            onClick={fetchRecommendations}
+            className="mt-2"
+            onClick={handleRetry}
           >
-            Retry
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
           </Button>
         </CardContent>
       </Card>
@@ -123,13 +139,13 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
           AI Habit Recommendations
         </CardTitle>
         <CardDescription>
-          Personalized habit suggestions based on your current habits and patterns
+          Personalized habit suggestions to help you build a better routine
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {recommendations.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4">
-            No recommendations available. Try adding some habits first.
+            No recommendations available. Try refreshing for new suggestions.
           </p>
         ) : (
           recommendations.map((recommendation, index) => (
