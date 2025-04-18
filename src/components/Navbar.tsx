@@ -1,12 +1,44 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Activity, Bell } from "lucide-react";
+
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { 
+  Activity, 
+  Bell, 
+  Home,
+  Users,
+  Trophy,
+  BarChart,
+  Heart,
+  ChevronDown,
+  X,
+  Menu,
+  UserPlus,
+  User,
+  Settings,
+  HelpCircle,
+  LogOut
+} from "lucide-react";
 import { Button } from "@/components/ui";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { 
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent
+} from "@/components/ui/popover";
 
 const Navbar = () => {
   const isMobile = useIsMobile();
+  const { pathname } = useLocation();
   const { toast } = useToast();
   const [notificationCount, setNotificationCount] = React.useState(3);
 
@@ -16,6 +48,15 @@ const Navbar = () => {
       title: "Notifications cleared",
       description: "You have no new notifications.",
     });
+  };
+
+  // Simple function to handle logout
+  const handleLogout = () => {
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    // Add actual logout logic here
   };
 
   // Mobile navbar is very simple
