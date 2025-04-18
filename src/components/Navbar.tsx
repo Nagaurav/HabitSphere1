@@ -1,50 +1,14 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui";
-import { 
-  LogOut, 
-  Home, 
-  Activity, 
-  BarChart, 
-  Users, 
-  Trophy, 
-  UserPlus, 
-  Heart, 
-  Bell, 
-  User, 
-  Settings,
-  HelpCircle,
-  Menu,
-  X,
-  ChevronDown
-} from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
+import { Activity, Bell } from "lucide-react";
+import { Button } from "@/components/ui";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
 
-const Navbar: React.FC = () => {
-  const { pathname } = useLocation();
-  const { toast } = useToast();
+const Navbar = () => {
   const isMobile = useIsMobile();
-  const [notificationCount, setNotificationCount] = useState(3);
-
-  const handleLogout = () => {
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
-  };
+  const { toast } = useToast();
+  const [notificationCount, setNotificationCount] = React.useState(3);
 
   const handleNotificationClick = () => {
     setNotificationCount(0);
@@ -54,10 +18,10 @@ const Navbar: React.FC = () => {
     });
   };
 
-  // Only show logo and notifications on mobile
+  // Mobile navbar is very simple
   if (isMobile) {
     return (
-      <nav className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <div className="rounded-full bg-primary/10 p-1">
@@ -68,21 +32,19 @@ const Navbar: React.FC = () => {
             </span>
           </Link>
 
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative"
-              onClick={handleNotificationClick}
-            >
-              <Bell className="h-5 w-5" />
-              {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                  {notificationCount}
-                </span>
-              )}
-            </Button>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative"
+            onClick={handleNotificationClick}
+          >
+            <Bell className="h-5 w-5" />
+            {notificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                {notificationCount}
+              </span>
+            )}
+          </Button>
         </div>
       </nav>
     );
