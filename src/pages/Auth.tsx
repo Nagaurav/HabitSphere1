@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 const authFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -20,6 +21,7 @@ const authFormSchema = z.object({
 const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -74,6 +76,9 @@ const Auth: React.FC = () => {
         const { error } = await supabase.auth.signUp({
           email: values.email,
           password: values.password,
+          options: {
+            emailRedirectTo: window.location.origin,
+          },
         });
 
         if (error) throw error;
@@ -91,6 +96,10 @@ const Auth: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -133,7 +142,23 @@ const Auth: React.FC = () => {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="••••••••" {...field} />
+                        <div className="relative">
+                          <Input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="••••••••" 
+                            {...field} 
+                          />
+                          <Button 
+                            type="button"
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute right-0 top-0 h-full px-3" 
+                            onClick={togglePasswordVisibility}
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -148,9 +173,9 @@ const Auth: React.FC = () => {
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-center text-sm text-muted-foreground">
               {activeTab === "login" ? (
-                "Don't have an account? Use the Sign Up tab above."
+                <p>Don't have an account? <button type="button" className="text-primary underline" onClick={() => setActiveTab("signup")}>Sign up</button></p>
               ) : (
-                "Already have an account? Use the Login tab above."
+                <p>Already have an account? <button type="button" className="text-primary underline" onClick={() => setActiveTab("login")}>Log in</button></p>
               )}
             </div>
           </CardFooter>
