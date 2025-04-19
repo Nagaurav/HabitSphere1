@@ -25,21 +25,39 @@ const NavbarUserMenu: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="" alt="User" />
-            <AvatarFallback>{userInitials}</AvatarFallback>
+        <Button 
+          variant="ghost" 
+          className="relative h-8 w-8 rounded-full hover:bg-primary/10"
+        >
+          <Avatar className="h-8 w-8 transition-transform hover:scale-105">
+            <AvatarImage src="" alt={user?.email || "User"} />
+            <AvatarFallback className="bg-primary/10 text-primary font-medium">
+              {userInitials}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuItem onClick={() => navigate("/profile")}>
+      <DropdownMenuContent 
+        className="w-56" 
+        align="end" 
+        forceMount
+      >
+        <DropdownMenuItem 
+          onClick={() => navigate("/profile")}
+          className="cursor-pointer hover:bg-primary/10 hover:text-primary"
+        >
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate("/settings")}>
+        <DropdownMenuItem 
+          onClick={() => navigate("/settings")}
+          className="cursor-pointer hover:bg-primary/10 hover:text-primary"
+        >
           Settings
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuItem 
+          onClick={handleSignOut}
+          className="cursor-pointer hover:bg-destructive/10 hover:text-destructive"
+        >
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
