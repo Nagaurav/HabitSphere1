@@ -11,6 +11,9 @@ import Analytics from "./pages/Analytics";
 import Social from "./pages/Social";
 import Challenges from "./pages/Challenges";
 import Partnerships from "./pages/Partnerships";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,9 @@ export default function App() {
               <Route path="/social" element={<Social />} />
               <Route path="/challenges" element={<Challenges />} />
               <Route path="/partnerships" element={<Partnerships />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/help" element={<Help />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

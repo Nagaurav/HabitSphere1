@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Activity, 
   Bell, 
@@ -39,6 +38,7 @@ import {
 const Navbar = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [notificationCount, setNotificationCount] = React.useState(3);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -51,29 +51,16 @@ const Navbar = () => {
     });
   };
 
-  // Enhanced function to handle account menu actions
   const handleAccountAction = (action: string) => {
     switch (action) {
       case "profile":
-        toast({
-          title: "Profile",
-          description: "Navigating to your profile page.",
-        });
-        // Add actual navigation logic here
+        navigate("/profile");
         break;
       case "settings":
-        toast({
-          title: "Settings",
-          description: "Opening settings page.",
-        });
-        // Add actual navigation logic here
+        navigate("/settings");
         break;
       case "help":
-        toast({
-          title: "Help Center",
-          description: "Opening help and documentation.",
-        });
-        // Add actual navigation or modal logic here
+        navigate("/help");
         break;
       case "logout":
         handleLogout();
@@ -83,13 +70,11 @@ const Navbar = () => {
     }
   };
 
-  // Function to handle logout
   const handleLogout = () => {
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
-    // Add actual logout logic here
   };
 
   const toggleMobileMenu = () => {
@@ -124,7 +109,6 @@ const Navbar = () => {
     </Link>
   );
 
-  // Mobile navbar is very simple
   if (isMobile) {
     return (
       <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -187,7 +171,6 @@ const Navbar = () => {
     );
   }
 
-  // Desktop navbar
   return (
     <nav className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:block hidden">
       <div className="container flex h-16 items-center justify-between">
