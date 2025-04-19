@@ -105,9 +105,16 @@ const Auth: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-muted/30 p-4">
       <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Habit Sphere</h1>
-          <p className="text-muted-foreground mt-2">Build better habits, one day at a time</p>
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="rounded-full bg-primary/10 p-2">
+              <Activity className="h-8 w-8 text-primary" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            Habit Sphere
+          </h1>
+          <p className="text-muted-foreground">Build better habits, one day at a time</p>
         </div>
         
         <Card className="w-full">

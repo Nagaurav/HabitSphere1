@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import NavbarUserMenu from "./NavbarUserMenu";
 import { Button } from "@/components/ui/button";
-import { Home, BarChart3, Users, Trophy, Handshake, Settings, HelpCircle } from "lucide-react";
+import { Activity, Home, BarChart3, Users, Trophy, Handshake, Settings, HelpCircle } from "lucide-react";
 
 const NavbarWithUserMenu: React.FC = () => {
   const isMobile = useIsMobile();
@@ -12,9 +12,16 @@ const NavbarWithUserMenu: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <Link to="/" className="flex items-center font-bold text-xl mr-4">
-          <span className="hidden sm:inline">HabitSphere</span>
-          <span className="sm:hidden">HS</span>
+        <Link to="/" className="flex items-center gap-2">
+          <div className="rounded-full bg-primary/10 p-1.5">
+            <Activity className="h-5 w-5 text-primary" />
+          </div>
+          <span className="hidden sm:inline font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            HabitSphere
+          </span>
+          <span className="sm:hidden font-bold text-xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            HS
+          </span>
         </Link>
 
         {!isMobile && (
