@@ -1,6 +1,6 @@
 
 import React from "react";
-import Navbar from "./Navbar";
+import NavbarWithUserMenu from "./NavbarWithUserMenu";
 import BottomNav from "./BottomNav";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,7 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children, className }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
+      <NavbarWithUserMenu />
       <main className={cn(
         "flex-1 container py-4 md:py-6",
         isMobile && "pb-24 px-3", // Added px-3 for better padding on mobile
