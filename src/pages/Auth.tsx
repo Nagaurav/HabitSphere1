@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Activity } from "lucide-react";
 
 const authFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -33,7 +32,6 @@ const Auth: React.FC = () => {
     },
   });
 
-  // Check if user is already logged in
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -44,7 +42,6 @@ const Auth: React.FC = () => {
 
     checkSession();
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (session) {
