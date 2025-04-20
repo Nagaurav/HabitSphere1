@@ -22,7 +22,6 @@ const Dashboard: React.FC = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Show AI habit recommendations after 2 seconds delay for UX
     const timer = setTimeout(() => {
       setShowRecommendations(true);
       fetchRecommendations();
@@ -30,13 +29,10 @@ const Dashboard: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Dummy fetchRecommendations - should be replaced with backend / AI call
   const fetchRecommendations = async () => {
     setLoadingRecommendations(true);
     setErrorRecommendations(null);
     try {
-      // TODO: implement real API call
-      // Simulating API delay and response
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const dummyRecs: HabitRecommendation[] = [
         {
@@ -91,6 +87,18 @@ const Dashboard: React.FC = () => {
     frequency: HabitFrequency;
     timeOfDay: TimeOfDay;
   }) => {
+    // Prevent adding duplicate habits with the same title (case insensitive)
+    const exists = habits.some(
+      (h) => h.title.toLowerCase() === habitData.title.toLowerCase()
+    );
+    if (exists) {
+      toast({
+        title: "Habit already exists",
+        description: `The habit "${habitData.title}" is already in your list.`,
+      });
+      return;
+    }
+
     const newHabit: Habit = {
       id: Date.now().toString(),
       title: habitData.title,
@@ -129,7 +137,6 @@ const Dashboard: React.FC = () => {
   const totalHabits = habits.length;
   const averageStreak = habits.length > 0 ? habits.reduce((sum, h) => sum + h.streak, 0) / habits.length : 0;
 
-  // XP for gamification
   const totalStreakDays = habits.reduce((sum, h) => sum + h.streak, 0);
   const playerXP = completedToday * 10 + totalStreakDays;
   const playerLevel = Math.floor(playerXP / 100) + 1;
@@ -254,4 +261,3 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-
