@@ -29,26 +29,72 @@ const Dashboard: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Enhanced fetchRecommendations to provide varying recommendations on each call
   const fetchRecommendations = async () => {
     setLoadingRecommendations(true);
     setErrorRecommendations(null);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const dummyRecs: HabitRecommendation[] = [
+      // Generate different dummy recommendations randomly from a pool
+      const allDummyRecs: HabitRecommendation[] = [
         {
           title: "Read for 30 minutes",
           description: "Improve knowledge and relax by reading daily.",
           category: "learning",
-          difficulty: 2
+          difficulty: 2,
         },
         {
           title: "Walk 10,000 steps",
           description: "Boost fitness and health with daily walking.",
           category: "fitness",
-          difficulty: 3
+          difficulty: 3,
+        },
+        {
+          title: "Practice meditation",
+          description: "Reduce stress and improve focus with daily meditation.",
+          category: "mindfulness",
+          difficulty: 2,
+        },
+        {
+          title: "Write a journal entry",
+          description: "Reflect on your day and track progress regularly.",
+          category: "mindfulness",
+          difficulty: 2,
+        },
+        {
+          title: "Drink water before meals",
+          description: "Stay hydrated by drinking water before every meal.",
+          category: "health",
+          difficulty: 1,
+        },
+        {
+          title: "Stretch for 5 minutes",
+          description: "Enhance flexibility and reduce muscle tension.",
+          category: "fitness",
+          difficulty: 1,
+        },
+        {
+          title: "Limit social media to 30 minutes",
+          description: "Reduce distractions by limiting social media use daily.",
+          category: "digital_wellness",
+          difficulty: 3,
+        },
+        {
+          title: "Review goals weekly",
+          description: "Stay aligned by reviewing your goals every week.",
+          category: "productivity",
+          difficulty: 2,
         }
       ];
-      setRecommendations(dummyRecs);
+
+      // Shuffle and pick 3 unique recommendations each time
+      const shuffled = allDummyRecs
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+        .slice(0, 3);
+
+      setRecommendations(shuffled);
     } catch (err) {
       setErrorRecommendations("Failed to load recommendations");
     } finally {
@@ -131,7 +177,6 @@ const Dashboard: React.FC = () => {
     handleAddHabit(habitData);
   };
 
-  // Calculate overall stats
   const completedToday = habits.filter(h => h.completedToday).length;
   const completionRate = habits.length > 0 ? (completedToday / habits.length) * 100 : 0;
   const totalHabits = habits.length;
@@ -261,3 +306,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+
