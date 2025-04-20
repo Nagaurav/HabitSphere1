@@ -5,10 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Sparkles, Plus, Loader2, RefreshCw } from 'lucide-react';
-import { getHabitRecommendations, HabitRecommendation } from '@/lib/ai-assistant';
 import { HabitCategory, HabitFrequency, TimeOfDay, getCategoryIcon } from '@/lib/habits';
 
+export interface HabitRecommendation {
+  title: string;
+  description: string;
+  category: string;
+  difficulty: number;
+}
+
 interface HabitRecommendationsProps {
+  recommendations?: HabitRecommendation[];
+  loading?: boolean;
+  error?: string | null;
   onAddHabit?: (habitData: {
     title: string;
     description: string;
@@ -16,52 +25,25 @@ interface HabitRecommendationsProps {
     frequency: HabitFrequency;
     timeOfDay: TimeOfDay;
   }) => void;
+  onRetry?: () => void;
 }
 
-const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit }) => {
-  const [recommendations, setRecommendations] = useState<HabitRecommendation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({
+  recommendations = [],
+  loading = false,
+  error = null,
+  onAddHabit,
+  onRetry,
+}) => {
   const { toast } = useToast();
-
-  useEffect(() => {
-    fetchRecommendations();
-  }, []);
-
-  const fetchRecommendations = async () => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const data = await getHabitRecommendations();
-      
-      if (data && data.length > 0) {
-        setRecommendations(data);
-        setError(null);
-      } else {
-        setError('No recommendations available right now');
-      }
-    } catch (err) {
-      console.error('Error fetching recommendations:', err);
-      setError('Failed to load habit recommendations');
-      toast({
-        title: 'Error',
-        description: 'Failed to load habit recommendations',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddToHabits = (recommendation: HabitRecommendation) => {
     if (!onAddHabit) return;
-    
-    // Convert recommendation to the format expected by the onAddHabit function
+
     onAddHabit({
       title: recommendation.title,
       description: recommendation.description,
-      category: recommendation.category as HabitCategory, 
+      category: recommendation.category as HabitCategory,
       frequency: 'daily', // Default to daily
       timeOfDay: 'anytime' as TimeOfDay, // Default to anytime
     });
@@ -70,14 +52,6 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
       title: 'Habit Added',
       description: `"${recommendation.title}" has been added to your habits`,
     });
-  };
-
-  const handleRetry = () => {
-    toast({
-      title: 'Refreshing',
-      description: 'Getting new AI recommendations...',
-    });
-    fetchRecommendations();
   };
 
   if (loading) {
@@ -114,19 +88,26 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
           <CardDescription>Unable to load recommendations</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            {error}. This could be due to network issues or our AI service being temporarily unavailable.
-          </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-2"
-            onClick={handleRetry}
-          >
+          <p className="text-sm text-muted-foreground mb-4">{error}. This could be due to network issues or our AI service being temporarily unavailable.</p>
+          <Button variant="outline" size="sm" className="mt-2" onClick={onRetry}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
           </Button>
         </CardContent>
+      </Card>
+    );
+  }
+
+  if (recommendations.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            AI Recommendations
+          </CardTitle>
+          <CardDescription>No recommendations available. Try refreshing for new suggestions.</CardDescription>
+        </CardHeader>
       </Card>
     );
   }
@@ -138,63 +119,46 @@ const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({ onAddHabit 
           <Sparkles className="h-5 w-5 text-primary" />
           AI Habit Recommendations
         </CardTitle>
-        <CardDescription>
-          Personalized habit suggestions to help you build a better routine
-        </CardDescription>
+        <CardDescription>Personalized habit suggestions to help you build a better routine</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {recommendations.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4">
-            No recommendations available. Try refreshing for new suggestions.
-          </p>
-        ) : (
-          recommendations.map((recommendation, index) => (
-            <Card key={index} className="overflow-hidden">
-              <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <span className="text-lg">
-                    {getCategoryIcon(recommendation.category as HabitCategory)}
-                  </span>
-                  {recommendation.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-2">
-                <p className="text-sm text-muted-foreground">{recommendation.description}</p>
-                <div className="flex items-center mt-2 gap-2">
-                  <span className="text-xs bg-muted px-2 py-1 rounded-full">
-                    {recommendation.category}
-                  </span>
-                  <span className="text-xs bg-muted px-2 py-1 rounded-full">
-                    Difficulty: {recommendation.difficulty}/5
-                  </span>
-                </div>
-              </CardContent>
-              <CardFooter className="p-4 pt-0">
-                {onAddHabit && (
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => handleAddToHabits(recommendation)}
-                  >
-                    <Plus className="h-4 w-4 mr-2" /> Add to My Habits
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
-          ))
-        )}
+        {recommendations.map((recommendation, index) => (
+          <Card key={index} className="overflow-hidden">
+            <CardHeader className="p-4 pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <span className="text-lg">{getCategoryIcon(recommendation.category as HabitCategory)}</span>
+                {recommendation.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-2">
+              <p className="text-sm text-muted-foreground">{recommendation.description}</p>
+              <div className="flex items-center mt-2 gap-2">
+                <span className="text-xs bg-muted px-2 py-1 rounded-full">{recommendation.category}</span>
+                <span className="text-xs bg-muted px-2 py-1 rounded-full">Difficulty: {recommendation.difficulty}/5</span>
+              </div>
+            </CardContent>
+            <CardFooter className="p-4 pt-0">
+              {onAddHabit && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => handleAddToHabits(recommendation)}
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Add to My Habits
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
+        ))}
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fetchRecommendations}
-          disabled={loading}
-        >
-          {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-          Refresh Recommendations
-        </Button>
+        {onRetry && (
+          <Button variant="outline" size="sm" onClick={onRetry}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh Recommendations
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
