@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BarChart, LineChart, PieChart, ResponsiveContainer, Bar, Line, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from "recharts";
-import { CalendarDays, Clock, DownloadCloud, Share2, Calendar, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { CalendarDays, Clock, DownloadCloud, Share2, Calendar, ChevronLeft, ChevronRight, Filter, TrendingUp, SquareDashed } from "lucide-react";
 
 const COLORS = ['#8b5cf6', '#d946ef', '#f97316', '#0ea5e9', '#14b8a6'];
 
@@ -53,6 +53,23 @@ const timeOfDayData = [
   { name: '9PM-12AM', value: 15 },
 ];
 
+// Mock trend data for "Long-term Trends"
+const trendData = [
+  { date: 'Week 1', progress: 20 },
+  { date: 'Week 2', progress: 40 },
+  { date: 'Week 3', progress: 55 },
+  { date: 'Week 4', progress: 70 },
+  { date: 'Week 5', progress: 85 },
+];
+
+// Mock pattern data for "Behavior Patterns"
+const patternsMock = [
+  "You tend to skip habits on Fridays more than other days.",
+  "Morning habits have a higher completion rate than evening ones.",
+  "You improve streaks after weekends consistently.",
+  "Meditation habits show a plateau after two weeks."
+];
+
 const Analytics: React.FC = () => {
   const [timeRange, setTimeRange] = useState('monthly');
   const [currentMonth, setCurrentMonth] = useState('April 2025');
@@ -71,7 +88,7 @@ const Analytics: React.FC = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-6 container-responsive max-w-screen-lg mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Habit Analytics</h1>
@@ -79,8 +96,8 @@ const Analytics: React.FC = () => {
               Track your habit progress and identify patterns for improvement
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Select defaultValue="monthly">
+          <div className="flex flex-wrap items-center gap-2">
+            <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Time Period" />
               </SelectTrigger>
@@ -91,7 +108,7 @@ const Analytics: React.FC = () => {
                 <SelectItem value="yearly">Yearly</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" aria-label="Filter">
               <Filter className="h-4 w-4" />
             </Button>
             <Button variant="outline" onClick={handleExport}>
@@ -101,17 +118,17 @@ const Analytics: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
+            <Button variant="outline" size="icon" onClick={handlePreviousMonth} aria-label="Previous Month">
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div className="text-lg font-medium">{currentMonth}</div>
-            <Button variant="outline" size="icon" onClick={handleNextMonth}>
+            <Button variant="outline" size="icon" onClick={handleNextMonth} aria-label="Next Month">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex items-center gap-2">
+          <div>
             <Button variant="ghost" size="sm" className="text-primary">
               Today
             </Button>
@@ -177,7 +194,7 @@ const Analytics: React.FC = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="w-full justify-start bg-muted/50 p-1 max-w-fit">
+          <TabsList className="w-full justify-start bg-muted/50 p-1 max-w-fit flex-wrap rounded-md gap-1">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="habits">Habits</TabsTrigger>
             <TabsTrigger value="trends">Trends</TabsTrigger>
@@ -227,56 +244,6 @@ const Analytics: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Habits by Category</CardTitle>
-                  <CardDescription>Distribution across different habit types</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="h-72 flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={categoryData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {categoryData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Completion by Time of Day</CardTitle>
-                  <CardDescription>When you're most likely to complete habits</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="h-72">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={timeOfDayData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="value" fill="#f97316" name="Completions (%)" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </TabsContent>
           
@@ -297,12 +264,23 @@ const Analytics: React.FC = () => {
           <TabsContent value="trends">
             <Card>
               <CardHeader>
-                <CardTitle>Long-term Trends</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  Long-term Trends
+                </CardTitle>
                 <CardDescription>View your progress over time</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Coming soon! Long-term trend analysis will be available in the next update.</p>
+              <CardContent className="pt-0">
+                <div className="h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={trendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis domain={[0, 100]} />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="progress" stroke="#8b5cf6" strokeWidth={3} dot />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -311,13 +289,18 @@ const Analytics: React.FC = () => {
           <TabsContent value="patterns">
             <Card>
               <CardHeader>
-                <CardTitle>Behavior Patterns</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <SquareDashed className="h-5 w-5 text-primary" />
+                  Behavior Patterns
+                </CardTitle>
                 <CardDescription>AI-powered insights about your habit patterns</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Coming soon! Pattern analysis will be available in the next update.</p>
-                </div>
+                <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+                  {patternsMock.map((pattern, idx) => (
+                    <li key={idx}>{pattern}</li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           </TabsContent>
