@@ -1,4 +1,3 @@
-
 let activeTabId;
 let startTime;
 let activeUrl;
@@ -74,11 +73,9 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 async function checkTimeLimits() {
   if (!activeUrl) return;
 
-  // Retrieve userId from storage
   chrome.storage.local.get(['userId'], async function(result) {
     userId = result.userId || '00000000-0000-0000-0000-000000000000';
     
-    // Fetch time limits from the Supabase edge function
     try {
       const response = await fetch('https://qmdqruppbuyutasssggx.supabase.co/functions/v1/check-time-limits', {
         method: 'POST',

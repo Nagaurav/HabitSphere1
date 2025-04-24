@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
   // DOM Elements
   const loginView = document.getElementById('login-view');
@@ -53,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // View dashboard button
   viewDashboardBtn.addEventListener('click', function() {
-    chrome.tabs.create({ url: "https://1e008a3d-1f47-4569-83bf-d639684a175f.lovableproject.com/digital-habits" });
+    chrome.tabs.create({ url: "https://88ef53ce-ec89-4709-869e-e1f21f9ea9b5.lovableproject.com/digital-habits" });
   });
 
   function showStatsView() {
