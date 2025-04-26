@@ -1,73 +1,144 @@
-# Welcome to your Lovable project
+🚀 HabitSphere
+ Build Better Habits, One Sphere at a Time.
 
-## Project info
+📌 Problem Statement
+Problem Statement 9 – Build the Ultimate Digital Habit Builder
 
-**URL**: https://lovable.dev/projects/9f1e7802-4a59-460b-ae9b-eb86f314b680
 
-## How can I edit this code?
+🎯 Objective
+HabitSphere solves the problem of ineffective habit formation and lack of consistency by providing a gamified, AI-powered platform for habit building.
+It serves individuals looking to improve their personal routines with smart tracking, mood-based suggestions, relapse recovery tools, and engaging rewards.
+HabitSphere promotes daily habit reinforcement with a dopamine-aware, fun, and personalized approach.
 
-There are several ways of editing your application.
+🧠 Team & Approach
+SOLO
 
-**Use Lovable**
+Member:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9f1e7802-4a59-460b-ae9b-eb86f314b680) and start prompting.
+Gaurav Naik (GitHub / LinkedIn / Full Stack Developer)
 
-Changes made via Lovable will be committed automatically to this repo.
 
-**Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Your Approach:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+We chose this problem because personal development tools often lack personalization and engagement.
 
-Follow these steps:
+Key challenges addressed:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Motivation drop-off after initial enthusiasm
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Lack of real-time mood-based habit adjustments
 
-# Step 3: Install the necessary dependencies.
-npm i
+Reward systems that don’t feel meaningful
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Breakthrough: Using AI with habit journaling + NFT rewards + real-time dopamine control to maintain momentum.
+
+🛠️ Tech Stack
+Core Technologies Used:
+
+Frontend: React.js, TailwindCSS
+
+Backend: FastAPI, Node.js (optional microservices)
+
+Database: PostgreSQL, MongoDB
+
+APIs: OpenAI (habit assistant), Web Speech API (for voice commands), Calendar APIs
+
+Hosting:  Vercel (Frontend)
+
+Sponsor Technologies Used (if any): NA
+
+Groq: ⚡ Lightning-fast AI processing for habit suggestions
+
+Fluvio: Real-time tracking of daily habits
+
+Base: Smart wallet for NFT rewards
+
+Stellar: ✅ Micro-payment system for bonus habit challenges
+
+✨ Key Features
+✅ AI-powered Habit Assistant (suggests tasks based on your mood)
+✅ NFT Habit Rewards (earn NFTs as badges for habit streaks)
+✅ Mood-Based Habit Adjustment (adapts habits based on emotional input)
+✅ Visual Habit Journaling (daily habit visualization like a growing sphere)
+✅ Relapse Recovery Mode (gentle nudges if a user misses a day)
+✅ Calendar Integration (auto-suggests routines)
+✅ Dopamine-Aware Distraction Control (blocks distracting apps based on goals)
+
+📽️ Demo & Deliverables
+Demo Video Link: [Insert YouTube/Loom link]
+
+Pitch Deck / PPT Link: [Insert Google Slides/PDF link]
+
+✅ Tasks & Bonus Checklist
+✅ All members followed 2 social channels + filled form
+✅ Bonus Task 1 – Badges shared
+✅ Bonus Task 2 – Signed up for Sprint.dev
+
+🧪 How to Run the Project
+Requirements:
+
+Node.js
+
+Python 3.10+
+
+PostgreSQL Database
+
+API keys (OpenAI, Stellar, etc.)
+
+Local Setup:
+
+bash
+Copy
+Edit
+# Clone the repo
+git clone https://github.com/your-team/habitsphere
+
+# Install frontend dependencies
+cd habitsphere-frontend
+npm install
+
+# Install backend dependencies
+cd habitsphere-backend
+pip install -r requirements.txt
+
+# Create .env file for API keys
+
+# Start backend server
+uvicorn main:app --reload
+
+# Start frontend
 npm run dev
-```
+Notes:
 
-**Edit a file directly in GitHub**
+Frontend on localhost:3000
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Backend on localhost:8000
 
-**Use GitHub Codespaces**
+🧬 Future Scope
+📈 Add multi-language support
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+🛡️ Enhance security for wallet and data
 
-## What technologies are used for this project?
+🌐 Broaden to corporate wellness programs
 
-This project is built with:
+🎯 Add Mirror-Based Habit Emulation (copy habits of successful people)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+🧠 Integrate AI habit personality testing
 
-## How can I deploy this project?
+📎 Resources / Credits
+OpenAI for mood-based prompts
 
-Simply open [Lovable](https://lovable.dev/projects/9f1e7802-4a59-460b-ae9b-eb86f314b680) and click on Share -> Publish.
+Fluvio for real-time event streaming
 
-## Can I connect a custom domain to my Lovable project?
+Stellar for payment handling
 
-Yes, you can!
+TailwindCSS, React.js Community
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Inspiration: Atomic Habits by James Clear
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+🏁 Final Words
+HabitSphere was a journey of blending neuroscience, personal development, and tech!
+We learned how deeply dopamine drives user behavior and how gamification can make serious goals fun.
+Thanks to all mentors, organizers, and teammates for this amazing ride! 🚀
+
